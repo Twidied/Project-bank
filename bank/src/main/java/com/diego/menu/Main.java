@@ -1,16 +1,16 @@
-package com.diego.ui;
-
-import com.diego.dao.EmpleadoDAO;
-import com.diego.model.Empleado;
+package com.diego.menu;
 
 import java.util.Scanner;
+
+import com.diego.clases.Empleado;
+import com.diego.datos.EmpleadoDATOS;
 
 public class Main {
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        EmpleadoDAO dao = new EmpleadoDAO();
+        EmpleadoDATOS dao = new EmpleadoDATOS();
 
         System.out.println("=== Registrar empleado ===");
         System.out.print("ID: ");

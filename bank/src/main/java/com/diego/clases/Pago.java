@@ -1,4 +1,4 @@
-package com.diego.model;
+package com.diego.clases;
 
 public class Pago {
 

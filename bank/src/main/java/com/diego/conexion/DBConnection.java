@@ -1,4 +1,4 @@
-package com.diego.utils;
+package com.diego.conexion;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,7 +14,7 @@ public class DBConnection {
                     "admin123"
             );
         } catch (SQLException e) {
-            System.out.println("Error conexión: " + e.getMessage());
+            System.out.println("Error conexion: " + e.getMessage());
             return null;
         }
     }

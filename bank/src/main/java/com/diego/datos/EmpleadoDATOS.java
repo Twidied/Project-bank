@@ -1,15 +1,15 @@
-package com.diego.dao;
-
-import com.diego.model.Empleado;
-import com.diego.utils.DBConnection;
+package com.diego.datos;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class EmpleadoDAO {
+import com.diego.clases.Empleado;
+import com.diego.conexion.DBConnection;
+
+public class EmpleadoDATOS {
 
     // guardar empleado en la BD
     public void guardarEmpleado(Empleado e) {
