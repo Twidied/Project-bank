@@ -2,43 +2,32 @@ package com.diego.menu;
 
 import java.util.Scanner;
 
-import com.diego.clases.Empleado;
-import com.diego.datos.EmpleadoDATOS;
-
 public class Main {
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        EmpleadoDATOS dao = new EmpleadoDATOS();
+        int opcion = 0;
 
-        System.out.println("=== Registrar empleado ===");
-        System.out.print("ID: ");
-        int id = sc.nextInt();
-        sc.nextLine(); // limpiar
+        while (opcion != 6) {
+            System.out.println("--- MENU ---");
+            System.out.println("1. Empleados");
+            System.out.println("2. Clientes");
+            System.out.println("3. Prestamos");
+            System.out.println("4. Pagos");
+            System.out.println("5. Reportes");
+            System.out.println("6. Salir");
+            opcion = sc.nextInt();
 
-        System.out.print("Nombre: ");
-        String nombre = sc.nextLine();
-
-        System.out.print("Documento: ");
-        String doc = sc.nextLine();
-
-        System.out.print("Rol: ");
-        String rol = sc.nextLine();
-
-        System.out.print("Correo: ");
-        String correo = sc.nextLine();
-
-        System.out.print("Salario: ");
-        double salario = sc.nextDouble();
-
-        Empleado emp = new Empleado(id, nombre, doc, rol, correo, salario);
-
-        dao.guardarEmpleado(emp);  // guarda en BD
-
-        System.out.println("\n--- Listado ---");
-        for (Empleado e : dao.listarEmpleados()) {
-            System.out.println(e.getNombre() + " - " + e.getDocumento());
+            switch (opcion) {
+                case 1 -> MenuEmpleados.mostrar();
+                case 2 -> MenuClientes.mostrar();
+                case 3 -> MenuPrestamos.mostrar();
+                case 4 -> MenuPagos.mostrar();
+                case 5 -> MenuReportes.mostrar();
+                case 6 -> System.out.println("Saliendo...");
+                default -> System.out.println("Opción no válida.");
+            }
         }
     }
 }

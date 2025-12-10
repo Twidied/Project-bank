@@ -20,21 +20,27 @@ Requerimientos Generales:
 
 - El proyecto debe permitir:
 - Módulo de Empleados
-- Registrar y consultar empleados.
+- Registrar y
+- consultar empleados.
 - Atributos: id, nombre, documento, rol, correo, salario.
 - Persistencia en archivo y base de datos.
+
 - Módulo de Clientes
-- Registrar y listar clientes con: id, nombre, documento, correo, telefono.
+- Registrar 
+- y listar clientes con: id, nombre, documento, correo, telefono.
 - Consultar préstamos asociados.
+
 - Módulo de Préstamos
 - Crear préstamos asociando cliente y empleado.
 - Calcular automáticamente monto total con interés y valor de cuota mensual.
 - Cambiar estado (pendiente / pagado).
 - Persistir en archivo y base de datos.
+
 - Módulo de Pagos
 - Registrar abonos a préstamos.
 - Actualizar saldo pendiente.
 - Mostrar histórico de pagos.
+
 - Módulo de Reportes
 - Consultar préstamos activos, préstamos vencidos, clientes morosos, etc.
 - Implementar expresiones Lambda y Stream API para filtrar resultados.
