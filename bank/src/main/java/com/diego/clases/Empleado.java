@@ -1,41 +1,25 @@
 package com.diego.clases;
 
 public class Empleado {
-
     private int id;
-    private String nombre;
-    private String documento;
-    private String rol;
-    private String correo;
+    private String nombre, documento, rol, correo;
     private double salario;
 
-    public Empleado() {
+    public Empleado(String n, String d, String r, String c, double s) {
+        nombre = n; documento = d; rol = r; correo = c; salario = s;
     }
 
-    public Empleado(int id, String nombre, String documento, String rol, String correo, double salario) {
-        this.id = id;
-        this.nombre = nombre;
-        this.documento = documento;
-        this.rol = rol;
-        this.correo = correo;
-        this.salario = salario;
+    public Empleado(int i, String n, String d, String r, String c, double s) {
+        id = i; nombre = n; documento = d; rol = r; correo = c; salario = s;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public String getNombre(){return nombre;}
+    public String getDocumento(){return documento;}
+    public String getRol(){return rol;}
+    public String getCorreo(){return correo;}
+    public double getSalario(){return salario;}
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getDocumento() { return documento; }
-    public void setDocumento(String documento) { this.documento = documento; }
-
-    public String getRol() { return rol; }
-    public void setRol(String rol) { this.rol = rol; }
-
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
-
-    public double getSalario() { return salario; }
-    public void setSalario(double salario) { this.salario = salario; }
+    public String toString() {
+        return id+" | "+nombre+" | "+documento+" | "+rol+" | "+correo+" | "+salario;
+    }
 }

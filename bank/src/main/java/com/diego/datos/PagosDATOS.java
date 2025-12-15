@@ -1,36 +1,54 @@
 package com.diego.datos;
 
+import com.diego.clases.Pago;
 import com.diego.conexion.DBConnection;
 import com.diego.conexion.FileManager;
-import com.diego.clases.Pago;
+
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PagosDATOS {
 
     public void guardar(Pago p) {
-        try {
-            DBConnection.getConnection().createStatement().executeUpdate(
-                "INSERT INTO pagos VALUES ("+
-                        p.getId()+","+p.getPrestamoId()+",'"+p.getFechaPago()+"',"+p.getMonto()+")"
-            );
-        } catch (Exception e) {}
-        FileManager.guardarLinea("archivos/pagos.txt", p.getId()+"|"+p.getMonto());
-        System.out.println("Guardado");
+
+        try (Connection con = DBConnection.getConnection()) {
+            PreparedStatement ps = con.prepareStatement(
+                    "INSERT INTO pagos(prestamo_id, monto) VALUES (?,?)");
+            ps.setInt(1, p.getPrestamoId());
+            ps.setDouble(2, p.getMonto());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Error BD pagos");
+        }
+
+        String texto =
+                "Prestamo ID: " + p.getPrestamoId() + "\n" +
+                "Monto: " + p.getMonto() + "\n" +
+                "----------------------\n";
+
+        FileManager.guardar("pagos.txt", texto);
     }
 
-    public List<Pago> listar(String sql) {
+    public List<Pago> listarPorPrestamo(int id) {
         List<Pago> lista = new ArrayList<>();
-        try {
-            ResultSet rs = DBConnection.getConnection().createStatement().executeQuery(sql);
-            while (rs.next()) lista.add(new Pago(
-                    rs.getInt(1),rs.getInt(2),rs.getString(3),rs.getDouble(4)
-            ));
-        } catch (Exception e) {}
+
+        try (Connection con = DBConnection.getConnection()) {
+            PreparedStatement ps = con.prepareStatement(
+                    "SELECT * FROM pagos WHERE prestamo_id=?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                lista.add(new Pago(
+                        rs.getInt("id"),
+                        rs.getInt("prestamo_id"),
+                        rs.getDouble("monto")
+                ));
+            }
+        } catch (Exception e) {
+            System.out.println("Error listar pagos");
+        }
+
         return lista;
     }
-
-    public List<Pago> porPrestamo(int id) { return listar("SELECT * FROM pagos WHERE prestamo_id="+id); }
-    public List<Pago> todos() { return listar("SELECT * FROM pagos"); }
 }

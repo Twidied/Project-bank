@@ -1,42 +1,72 @@
 package com.diego.datos;
 
+import com.diego.clases.Prestamo;
 import com.diego.conexion.DBConnection;
 import com.diego.conexion.FileManager;
-import com.diego.clases.Prestamo;
+
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PrestamosDATOS {
 
     public void guardar(Prestamo p) {
-        try {
-            DBConnection.getConnection().createStatement().executeUpdate(
-                "INSERT INTO prestamos VALUES (" +
-                        p.getId()+","+p.getClienteId()+","+p.getEmpleadoId()+","+
-                        p.getMonto()+","+p.getInteres()+","+p.getCuotas()+",'"+
-                        p.getFechaInicio()+"','"+p.getEstado()+"')"
-            );
-        } catch (Exception e) { System.out.println("Error BD"); }
 
-        FileManager.guardarLinea("archivos/prestamos.txt", p.getId()+"|"+p.getMonto());
-        System.out.println("Guardado");
+        try (Connection con = DBConnection.getConnection()) {
+            String sql = "INSERT INTO prestamos(cliente_id, empleado_id, monto, interes, cuotas, estado) VALUES (?,?,?,?,?,?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, p.getClienteId());
+            ps.setInt(2, p.getEmpleadoId());
+            ps.setDouble(3, p.getMonto());
+            ps.setDouble(4, p.getInteres());
+            ps.setInt(5, p.getCuotas());
+            ps.setString(6, p.getEstado());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Error BD prestamos");
+        }
+
+        String texto =
+                "Cliente ID: " + p.getClienteId() + "\n" +
+                "Empleado ID: " + p.getEmpleadoId() + "\n" +
+                "Monto Total: " + p.getMontoTotal() + "\n" +
+                "Cuota Mensual: " + p.getCuotaMensual() + "\n" +
+                "Estado: " + p.getEstado() + "\n" +
+                "----------------------\n";
+
+        FileManager.guardar("prestamos.txt", texto);
     }
 
-    public List<Prestamo> listar(String c) { // c = condición
+    public List<Prestamo> listar() {
         List<Prestamo> lista = new ArrayList<>();
-        try {
-            ResultSet rs = DBConnection.getConnection().createStatement().executeQuery(c);
-            while (rs.next()) lista.add(new Prestamo(
-                    rs.getInt(1),rs.getInt(2),rs.getInt(3),
-                    rs.getDouble(4),rs.getDouble(5),rs.getInt(6),
-                    rs.getString(7),rs.getString(8)
-            ));
-        } catch (Exception e) {}
+
+        try (Connection con = DBConnection.getConnection()) {
+            ResultSet rs = con.prepareStatement("SELECT * FROM prestamos").executeQuery();
+            while (rs.next()) {
+                lista.add(new Prestamo(
+                        rs.getInt("id"),
+                        rs.getInt("cliente_id"),
+                        rs.getInt("empleado_id"),
+                        rs.getDouble("monto"),
+                        rs.getDouble("interes"),
+                        rs.getInt("cuotas"),
+                        rs.getString("estado")
+                ));
+            }
+        } catch (Exception e) {
+            System.out.println("Error listar prestamos");
+        }
+
         return lista;
     }
 
-    public List<Prestamo> activos() { return listar("SELECT * FROM prestamos WHERE estado='pendiente' AND DATE_ADD(fecha_inicio, INTERVAL cuotas MONTH)>=CURDATE()"); }
-
-    public List<Prestamo> vencidos() { return listar("SELECT * FROM prestamos WHERE estado='pendiente' AND DATE_ADD(fecha_inicio, INTERVAL cuotas MONTH)<CURDATE()"); }
+    public void marcarPagado(int id) {
+        try (Connection con = DBConnection.getConnection()) {
+            PreparedStatement ps = con.prepareStatement(
+                    "UPDATE prestamos SET estado='pagado' WHERE id=?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Error actualizar estado");
+        }
+    }
 }

@@ -1,37 +1,41 @@
 package com.diego.menu;
 
-import com.diego.datos.PagosDATOS;
 import com.diego.clases.Pago;
+import com.diego.datos.PagosDATOS;
+
 import java.util.Scanner;
 
 public class MenuPagos {
 
     public static void mostrar() {
+
         Scanner sc = new Scanner(System.in);
-        PagosDATOS d = new PagosDATOS();
+        PagosDATOS datos = new PagosDATOS();
         int op;
 
         do {
             System.out.println("--- PAGOS ---");
-            System.out.println("1. Guardar");
-            System.out.println("2. Ver por préstamo");
-            System.out.println("3. Ver todos");
-            System.out.println("4. Volver");
-            op = sc.nextInt(); sc.nextLine();
+            System.out.println("1. Registrar pago");
+            System.out.println("2. Ver pagos por prestamo");
+            System.out.println("3. Volver");
+            op = sc.nextInt();
 
             if (op == 1) {
-                System.out.print("Id: "); int id = sc.nextInt();
-                System.out.print("Prestamo: "); int pr = sc.nextInt(); sc.nextLine();
-                System.out.print("Fecha: "); String f = sc.nextLine();
-                System.out.print("Monto: "); double m = sc.nextDouble();
-                d.guardar(new Pago(id,pr,f,m));
-            }
-            if (op == 2) {
-                System.out.print("Prestamo: "); int pr = sc.nextInt();
-                d.porPrestamo(pr).forEach(System.out::println);
-            }
-            if (op == 3) d.todos().forEach(System.out::println);
+                System.out.print("ID Prestamo: ");
+                int id = sc.nextInt();
+                System.out.print("Monto a pagar: ");
+                double m = sc.nextDouble();
 
-        } while (op != 4);
+                datos.guardar(new Pago(id, m));
+            }
+
+            if (op == 2) {
+                System.out.print("ID Prestamo: ");
+                int id = sc.nextInt();
+                datos.listarPorPrestamo(id)
+                     .forEach(System.out::println);
+            }
+
+        } while (op != 3);
     }
 }

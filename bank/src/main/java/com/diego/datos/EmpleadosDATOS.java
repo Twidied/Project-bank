@@ -1,44 +1,60 @@
 package com.diego.datos;
 
+import com.diego.clases.Empleado;
 import com.diego.conexion.DBConnection;
 import com.diego.conexion.FileManager;
-import com.diego.clases.Empleado;
+
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class EmpleadosDATOS {
 
-    private static final String RUTA = "archivos/empleados.txt";
-
     public void guardar(Empleado e) {
-        try {
-            Connection con = DBConnection.getConnection();
-            con.createStatement().executeUpdate(
-                "INSERT INTO empleados VALUES (" +
-                        e.getId() + ",'" + e.getNombre() + "','" + e.getDocumento() + "','" +
-                        e.getRol() + "','" + e.getCorreo() + "'," + e.getSalario() + ")"
-            );
+
+        // BD
+        try (Connection c = DBConnection.getConnection()) {
+            String sql = "INSERT INTO empleados(nombre,documento,rol,correo,salario) VALUES(?,?,?,?,?)";
+            PreparedStatement ps = c.prepareStatement(sql);
+            ps.setString(1, e.getNombre());
+            ps.setString(2, e.getDocumento());
+            ps.setString(3, e.getRol());
+            ps.setString(4, e.getCorreo());
+            ps.setDouble(5, e.getSalario());
+            ps.executeUpdate();
         } catch (Exception ex) {
-            System.out.println("Error BD");
+            System.out.println("Error BD empleados");
         }
 
-        FileManager.guardarLinea(RUTA, e.getId()+"|"+e.getNombre());
-        System.out.println("Guardado");
+        // TXT
+        String texto =
+                "Nombre: " + e.getNombre() + "\n" +
+                "Documento: " + e.getDocumento() + "\n" +
+                "Rol: " + e.getRol() + "\n" +
+                "Correo: " + e.getCorreo() + "\n" +
+                "Salario: " + e.getSalario() + "\n" +
+                "----------------------\n";
+
+        FileManager.guardar("empleados.txt", texto);
     }
 
     public List<Empleado> listar() {
-        List<Empleado> lista = new ArrayList<>();
-        try {
-            Connection con = DBConnection.getConnection();
-            ResultSet rs = con.createStatement().executeQuery("SELECT * FROM empleados");
+        List<Empleado> l = new ArrayList<>();
+
+        try (Connection c = DBConnection.getConnection()) {
+            ResultSet rs = c.prepareStatement("SELECT * FROM empleados").executeQuery();
             while (rs.next()) {
-                lista.add(new Empleado(
-                        rs.getInt(1), rs.getString(2), rs.getString(3),
-                        rs.getString(4), rs.getString(5), rs.getDouble(6)
+                l.add(new Empleado(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("documento"),
+                        rs.getString("rol"),
+                        rs.getString("correo"),
+                        rs.getDouble("salario")
                 ));
             }
-        } catch (Exception e) { System.out.println("Error listando"); }
-        return lista;
+        } catch (Exception e) {
+            System.out.println("Error listar empleados");
+        }
+        return l;
     }
 }

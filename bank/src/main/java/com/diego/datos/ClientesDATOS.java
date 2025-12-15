@@ -1,41 +1,56 @@
 package com.diego.datos;
 
+import com.diego.clases.Cliente;
 import com.diego.conexion.DBConnection;
 import com.diego.conexion.FileManager;
-import com.diego.clases.Cliente;
+
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ClientesDATOS {
 
-    private static final String RUTA = "archivos/clientes.txt";
-
     public void guardar(Cliente c) {
-        try {
-            Connection con = DBConnection.getConnection();
-            con.createStatement().executeUpdate(
-                "INSERT INTO clientes VALUES (" +
-                        c.getId() + ",'" + c.getNombre() + "','" + c.getDocumento() + "','" +
-                        c.getCorreo() + "','" + c.getTelefono() + "')"
-            );
-        } catch (Exception ex) { System.out.println("Error BD"); }
 
-        FileManager.guardarLinea(RUTA, c.getId()+"|"+c.getNombre());
-        System.out.println("Guardado");
+        try (Connection con = DBConnection.getConnection()) {
+            String sql = "INSERT INTO clientes(nombre, documento, correo, telefono) VALUES (?,?,?,?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, c.getNombre());
+            ps.setString(2, c.getDocumento());
+            ps.setString(3, c.getCorreo());
+            ps.setString(4, c.getTelefono());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Error BD clientes");
+        }
+
+        String texto =
+                "Nombre: " + c.getNombre() + "\n" +
+                "Documento: " + c.getDocumento() + "\n" +
+                "Correo: " + c.getCorreo() + "\n" +
+                "Telefono: " + c.getTelefono() + "\n" +
+                "----------------------\n";
+
+        FileManager.guardar("clientes.txt", texto);
     }
 
     public List<Cliente> listar() {
         List<Cliente> lista = new ArrayList<>();
-        try {
-            ResultSet rs = DBConnection.getConnection().createStatement().executeQuery("SELECT * FROM clientes");
+
+        try (Connection con = DBConnection.getConnection()) {
+            ResultSet rs = con.prepareStatement("SELECT * FROM clientes").executeQuery();
             while (rs.next()) {
                 lista.add(new Cliente(
-                        rs.getInt(1), rs.getString(2), rs.getString(3),
-                        rs.getString(4), rs.getString(5)
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("documento"),
+                        rs.getString("correo"),
+                        rs.getString("telefono")
                 ));
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            System.out.println("Error listar clientes");
+        }
+
         return lista;
     }
 }

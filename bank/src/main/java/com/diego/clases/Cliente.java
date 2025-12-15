@@ -8,29 +8,39 @@ public class Cliente {
     private String correo;
     private String telefono;
 
-    public Cliente() {
+    public Cliente(String n, String d, String c, String t) {
+        nombre = n;
+        documento = d;
+        correo = c;
+        telefono = t;
     }
 
-    public Cliente(int id, String nombre, String documento, String correo, String telefono) {
-        this.id = id;
-        this.nombre = nombre;
-        this.documento = documento;
-        this.correo = correo;
-        this.telefono = telefono;
+    public Cliente(int i, String n, String d, String c, String t) {
+        id = i;
+        nombre = n;
+        documento = d;
+        correo = c;
+        telefono = t;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getDocumento() {
+        return documento;
+    }
 
-    public String getDocumento() { return documento; }
-    public void setDocumento(String documento) { this.documento = documento; }
+    public String getCorreo() {
+        return correo;
+    }
 
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
+    public String getTelefono() {
+        return telefono;
+    }
 
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
+    @Override
+    public String toString() {
+        return id + " | " + nombre + " | " + documento + " | " + correo + " | " + telefono;
+    }
 }

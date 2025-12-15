@@ -1,49 +1,89 @@
 package com.diego.datos;
 
-import com.diego.conexion.DBConnection;
-import com.diego.clases.Prestamo;
 import com.diego.clases.Cliente;
-import java.sql.*;
-import java.util.ArrayList;
+import com.diego.clases.Prestamo;
+import com.diego.conexion.DBConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 public class ReportesDATOS {
 
-    public List<Prestamo> activos() {
-        return consultar("SELECT * FROM prestamos WHERE estado='pendiente' AND DATE_ADD(fecha_inicio, INTERVAL cuotas MONTH)>=CURDATE()");
+    public List<Prestamo> prestamosActivos() {
+        return obtenerPrestamos()
+                .stream()
+                .filter(p -> p.getEstado().equalsIgnoreCase("pendiente"))
+                .collect(Collectors.toList());
     }
 
-    public List<Prestamo> vencidos() {
-        return consultar("SELECT * FROM prestamos WHERE estado='pendiente' AND DATE_ADD(fecha_inicio, INTERVAL cuotas MONTH)<CURDATE()");
+    public List<Prestamo> prestamosVencidos() {
+        return obtenerPrestamos()
+                .stream()
+                .filter(p -> p.getEstado().equalsIgnoreCase("vencido"))
+                .collect(Collectors.toList());
     }
 
-    public List<Cliente> morosos() {
-        List<Cliente> lista = new ArrayList<>();
-        try {
-            ResultSet rs = DBConnection.getConnection().createStatement().executeQuery(
-                "SELECT DISTINCT c.* FROM clientes c JOIN prestamos p ON c.id=p.cliente_id WHERE p.estado='pendiente' AND DATE_ADD(p.fecha_inicio, INTERVAL p.cuotas MONTH)<CURDATE()"
+    public List<Cliente> clientesMorosos() {
+
+        List<Cliente> clientes = new ArrayList<>();
+
+        try (Connection con = DBConnection.getConnection()) {
+
+            PreparedStatement ps = con.prepareStatement(
+                "SELECT DISTINCT c.* FROM clientes c " +
+                "JOIN prestamos p ON c.id = p.cliente_id " +
+                "WHERE p.estado = 'vencido'"
             );
+
+            ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
-                lista.add(new Cliente(
-                        rs.getInt(1), rs.getString(2), rs.getString(3),
-                        rs.getString(4), rs.getString(5)
+                clientes.add(new Cliente(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getString("documento"),
+                    rs.getString("correo"),
+                    rs.getString("telefono")
                 ));
             }
-        } catch (Exception e) {}
-        return lista;
+
+        } catch (Exception e) {
+            System.out.println("Error clientes morosos");
+        }
+
+        return clientes;
     }
 
-    private List<Prestamo> consultar(String sql) {
+    private List<Prestamo> obtenerPrestamos() {
+
         List<Prestamo> lista = new ArrayList<>();
-        try {
-            ResultSet rs = DBConnection.getConnection().createStatement().executeQuery(sql);
+
+        try (Connection con = DBConnection.getConnection()) {
+
+            PreparedStatement ps =
+                con.prepareStatement("SELECT * FROM prestamos");
+            ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
                 lista.add(new Prestamo(
-                        rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getDouble(4),
-                        rs.getDouble(5), rs.getInt(6), rs.getString(7), rs.getString(8)
+                    rs.getInt("id"),
+                    rs.getInt("cliente_id"),
+                    rs.getInt("empleado_id"),
+                    rs.getDouble("monto"),
+                    rs.getDouble("interes"),
+                    rs.getInt("cuotas"),
+                    rs.getString("estado")
                 ));
             }
-        } catch (Exception e) {}
+
+        } catch (Exception e) {
+            System.out.println("Error reportes");
+        }
+
         return lista;
     }
 }

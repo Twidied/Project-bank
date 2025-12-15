@@ -4,28 +4,31 @@ public class Pago {
 
     private int id;
     private int prestamoId;
-    private String fechaPago;
     private double monto;
 
-    public Pago() {
-    }
-
-    public Pago(int id, int prestamoId, String fechaPago, double monto) {
-        this.id = id;
+    // registrar pago
+    public Pago(int prestamoId, double monto) {
         this.prestamoId = prestamoId;
-        this.fechaPago = fechaPago;
         this.monto = monto;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    // listar pagos
+    public Pago(int id, int prestamoId, double monto) {
+        this.id = id;
+        this.prestamoId = prestamoId;
+        this.monto = monto;
+    }
 
-    public int getPrestamoId() { return prestamoId; }
-    public void setPrestamoId(int prestamoId) { this.prestamoId = prestamoId; }
+    public int getPrestamoId() {
+        return prestamoId;
+    }
 
-    public String getFechaPago() { return fechaPago; }
-    public void setFechaPago(String fechaPago) { this.fechaPago = fechaPago; }
+    public double getMonto() {
+        return monto;
+    }
 
-    public double getMonto() { return monto; }
-    public void setMonto(double monto) { this.monto = monto; }
+    @Override
+    public String toString() {
+        return id + " | Prestamo:" + prestamoId + " | Monto:" + monto;
+    }
 }
