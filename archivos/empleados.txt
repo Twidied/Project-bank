@@ -1,0 +1,7 @@
+ID: 5
+Nombre: no
+Documento: s
+Rol: 1
+Correo: s
+Salario: 122.0
+----------------------

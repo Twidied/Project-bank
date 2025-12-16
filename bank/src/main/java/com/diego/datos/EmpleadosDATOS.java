@@ -11,31 +11,52 @@ public class EmpleadosDATOS {
 
     public void guardar(Empleado e) {
 
-        // BD
-        try (Connection c = DBConnection.getConnection()) {
-            String sql = "INSERT INTO empleados(nombre,documento,rol,correo,salario) VALUES(?,?,?,?,?)";
-            PreparedStatement ps = c.prepareStatement(sql);
-            ps.setString(1, e.getNombre());
-            ps.setString(2, e.getDocumento());
-            ps.setString(3, e.getRol());
-            ps.setString(4, e.getCorreo());
-            ps.setDouble(5, e.getSalario());
-            ps.executeUpdate();
-        } catch (Exception ex) {
-            System.out.println("Error BD empleados");
+    int idGenerado = -1;
+
+    // BD
+    try (Connection c = DBConnection.getConnection()) {
+
+        String sql = "INSERT INTO empleados(nombre,documento,rol,correo,salario) VALUES(?,?,?,?,?)";
+
+        PreparedStatement ps = c.prepareStatement(
+            sql,
+            Statement.RETURN_GENERATED_KEYS
+        );
+
+        ps.setString(1, e.getNombre());
+        ps.setString(2, e.getDocumento());
+        ps.setString(3, e.getRol());
+        ps.setString(4, e.getCorreo());
+        ps.setDouble(5, e.getSalario());
+
+        ps.executeUpdate();
+
+        // 👇 OBTENER ID AUTOMÁTICO
+        ResultSet rs = ps.getGeneratedKeys();
+        if (rs.next()) {
+            idGenerado = rs.getInt(1);
         }
 
-        // TXT
-        String texto =
-                "Nombre: " + e.getNombre() + "\n" +
-                "Documento: " + e.getDocumento() + "\n" +
-                "Rol: " + e.getRol() + "\n" +
-                "Correo: " + e.getCorreo() + "\n" +
-                "Salario: " + e.getSalario() + "\n" +
-                "----------------------\n";
+        System.out.println("Empleado registrado con éxito");
+        System.out.println("ID asignado: " + idGenerado);
 
-        FileManager.guardar("empleados.txt", texto);
+    } catch (Exception ex) {
+        System.out.println("❌ Error BD empleados: " + ex.getMessage());
+        return;
     }
+
+    // TXT (guardamos también el ID)
+    String texto =
+            "ID: " + idGenerado + "\n" +
+            "Nombre: " + e.getNombre() + "\n" +
+            "Documento: " + e.getDocumento() + "\n" +
+            "Rol: " + e.getRol() + "\n" +
+            "Correo: " + e.getCorreo() + "\n" +
+            "Salario: " + e.getSalario() + "\n" +
+            "----------------------\n";
+
+    FileManager.guardar("empleados.txt", texto);
+}
 
     public List<Empleado> listar() {
         List<Empleado> l = new ArrayList<>();
