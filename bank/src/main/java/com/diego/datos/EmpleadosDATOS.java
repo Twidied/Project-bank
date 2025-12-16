@@ -31,7 +31,6 @@ public class EmpleadosDATOS {
 
         ps.executeUpdate();
 
-        // 👇 OBTENER ID AUTOMÁTICO
         ResultSet rs = ps.getGeneratedKeys();
         if (rs.next()) {
             idGenerado = rs.getInt(1);
@@ -41,11 +40,10 @@ public class EmpleadosDATOS {
         System.out.println("ID asignado: " + idGenerado);
 
     } catch (Exception ex) {
-        System.out.println("❌ Error BD empleados: " + ex.getMessage());
+        System.out.println("Error BD empleados: " + ex.getMessage());
         return;
     }
 
-    // TXT (guardamos también el ID)
     String texto =
             "ID: " + idGenerado + "\n" +
             "Nombre: " + e.getNombre() + "\n" +
