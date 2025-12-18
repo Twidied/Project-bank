@@ -19,6 +19,8 @@ public class ClientesDATOS {
             ps.setString(3, c.getCorreo());
             ps.setString(4, c.getTelefono());
             ps.executeUpdate();
+
+            
         } catch (Exception e) {
             System.out.println("Error BD clientes");
         }

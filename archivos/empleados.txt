@@ -1,7 +1,21 @@
+ID: 3
+Nombre: Diego
+Documento: 1234567899
+Rol: administrador
+Correo: admi@gmail.com
+Salario: 5000000.0
+----------------------
+ID: 4
+Nombre: Dayana
+Documento: 1234567888
+Rol: aseo
+Correo: day@gmail.com
+Salario: 4000000.0
+----------------------
 ID: 5
-Nombre: no
-Documento: s
-Rol: 1
-Correo: s
-Salario: 122.0
+Nombre: sara
+Documento: 1234567777
+Rol: jefe
+Correo: sar@gmail.com
+Salario: 1.0E7
 ----------------------
