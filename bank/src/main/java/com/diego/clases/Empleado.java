@@ -2,7 +2,10 @@ package com.diego.clases;
 
 public class Empleado {
     private int id;
-    private String nombre, documento, rol, correo;
+    private String nombre;
+    private String documento; 
+    private String rol;
+    private String correo;
     private double salario;
 
     public Empleado(String n, String d, String r, String c, double s) {

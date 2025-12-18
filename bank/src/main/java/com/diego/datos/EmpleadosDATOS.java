@@ -1,11 +1,15 @@
 package com.diego.datos;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.diego.clases.Empleado;
 import com.diego.conexion.DBConnection;
 import com.diego.conexion.FileManager;
-
-import java.sql.*;
-import java.util.*;
 
 public class EmpleadosDATOS {
 
